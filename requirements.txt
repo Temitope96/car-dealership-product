@@ -1,10 +1,15 @@
-# PySpark itself is already baked into the base Docker image
-# (quay.io/jupyter/pyspark-notebook, Spark 4.1.0 + Java 17) — do not add
-# pyspark here, it would fight the version already installed in the image.
-
-# Delta Lake — 4.1.0 fully supports Spark 4.1.0 (the image's Spark version).
-# If you change the base image's Spark version, re-check compatibility at
-# https://docs.delta.io/latest/releasenotes.html before changing this pin.
+# The base image installs Spark 4.1.0 as a raw binary distribution
+# (SPARK_HOME + PYTHONPATH), not via pip — so pip has no record it exists.
+# Left to its own devices, `pip install delta-spark` resolves its
+# ">=4.0.1" pyspark dependency by grabbing the *newest* PyPI release
+# (a ~450MB redundant download, and a version delta-spark 4.1.0 was never
+# verified against). The Dockerfile installs delta-spark with --no-deps
+# specifically to avoid this — it relies entirely on the image's built-in
+# PySpark 4.1.0 rather than pip fetching a second copy.
+#
+# Delta Lake 4.1.0 fully supports Spark 4.1.0 (the image's Spark version).
+# If you ever change the base image's Spark version, re-check compatibility
+# at https://docs.delta.io/latest/releasenotes.html before changing this pin.
 delta-spark==4.1.0
 
 # Synthetic data generation for local development (no real dealer data
