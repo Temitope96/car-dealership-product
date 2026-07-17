@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Spark / Delta Lake local runtime artifacts
+spark-warehouse/
+metastore_db/
+derby.log
+*.crc
+_delta_log/
+checkpoint/
+
+# Data (never commit real dealer data — only synthetic samples belong in git)
+data/raw/
+data/bronze/
+data/silver/
+data/gold/
+!data/sample/
+
+# Docker
+docker/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/

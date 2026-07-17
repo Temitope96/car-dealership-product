@@ -1,0 +1,22 @@
+{
+  "name": "dealership-data-platform (Spark + Delta Lake)",
+  "build": {
+    "dockerfile": "../docker/Dockerfile",
+    "context": ".."
+  },
+  "forwardPorts": [8888, 4040],
+  "portsAttributes": {
+    "8888": { "label": "JupyterLab" },
+    "4040": { "label": "Spark UI" }
+  },
+  "remoteUser": "jovyan",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}

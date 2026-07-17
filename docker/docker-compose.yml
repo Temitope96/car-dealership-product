@@ -1,0 +1,17 @@
+services:
+  spark-notebook:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: dealership-data-platform-spark:local
+    container_name: dealership-spark-notebook
+    ports:
+      - "8888:8888"   # JupyterLab
+      - "4040:4040"   # Spark UI (visible while a job/session is active)
+    volumes:
+      - ../:/home/jovyan/work
+    environment:
+      # Fixed token for local dev convenience — open
+      # http://localhost:8888/?token=devtoken
+      # Do not reuse this pattern for anything internet-exposed.
+      - JUPYTER_TOKEN=devtoken

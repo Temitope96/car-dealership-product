@@ -1,0 +1,68 @@
+flowchart TD
+    subgraph OWNER["Owner / Purchasing Agent"]
+        A1["1. Purchase vehicle at auction"]
+        A1R["Photograph receipt -> send to WhatsApp receipt number"]
+    end
+
+    subgraph FREIGHT["Freight / Shipping Coordinator"]
+        A2["2. Ship to Nigeria"]
+    end
+
+    subgraph PORT["Port Clearing Agent"]
+        A3["3. Vehicle arrives at port"]
+        A3D{"Customs cleared?"}
+        A3X["Clearance delay / documentation dispute"]
+    end
+
+    subgraph DRIVER["Driver"]
+        A4["4. Pick up vehicle from port"]
+        A4M["Post pickup update to WhatsApp group"]
+    end
+
+    subgraph OFFICE["Office Intake"]
+        A5["5. Vehicle arrives at office"]
+        A5M["Post arrival update to WhatsApp group"]
+    end
+
+    subgraph WORKSHOP["Inspector / Workshop / Cleaning"]
+        A6["6. Inspection"]
+        A6D{"Passes inspection?"}
+        A7["7. Repairs & parts replacement"]
+        A7M["Post repair progress to WhatsApp group"]
+        A8["8. Cleaning"]
+    end
+
+    subgraph SALES["Sales Team"]
+        A9["9. Listed for sale (Google Form)"]
+        A10["10. Sold"]
+        A10D{"Sale finalized?"}
+    end
+
+    subgraph FINANCE["Finance / Warehouse"]
+        A11["11. Profit recorded (calculated, Gold layer)"]
+    end
+
+    subgraph SYSTEM["Automated Agents (system lane)"]
+        S1["Receipt Intake Agent: OCR extraction -> Bronze/Silver"]
+        S2["WhatsApp Group Ingestion Agent: LLM extraction -> Bronze/Silver"]
+    end
+
+    A1 --> A1R --> S1
+    A1 --> A2 --> A3
+    A3 --> A3D
+    A3D -- No --> A3X --> A3D
+    A3D -- Yes --> A4
+    A4 --> A4M --> S2
+    A4M --> A5
+    A5 --> A5M --> S2
+    A5M --> A6
+    A6 --> A6D
+    A6D -- Fail --> A7
+    A6D -- Pass --> A8
+    A7 --> A7M --> S2
+    A7M --> A6
+    A8 --> A9
+    A9 --> A10
+    A10 --> A10D
+    A10D -- Falls through --> A9
+    A10D -- Confirmed --> A11
