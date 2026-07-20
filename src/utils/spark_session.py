@@ -31,18 +31,19 @@ def get_spark_session(app_name: str = "dealership-data-platform") -> SparkSessio
         )
         # Local warehouse directory — gitignored. In Databricks this is
         # replaced entirely by Unity Catalog managed table locations.
+        #
+        # Note: we deliberately do NOT enable Hive metastore support here.
+        # Without it, Spark's table catalog is in-memory and lives only
+        # inside one running kernel -- table names like "silver.vehicle"
+        # aren't visible to a different notebook's Spark session. Rather
+        # than stand up a real (Derby- or Postgres-backed) metastore just
+        # to work around that locally, cross-notebook table access goes
+        # through src/utils/lakehouse.py instead, which reads/writes Delta
+        # tables by their file path -- a Delta table's own transaction log
+        # is self-describing, so this works regardless of which session or
+        # notebook is asking. On Databricks, Unity Catalog is a real
+        # always-on multi-session catalog, so named tables just work there
+        # without any of this.
         .config("spark.sql.warehouse.dir", warehouse_dir)
-        # Pin the embedded Derby metastore to a fixed absolute path. Without
-        # this, its location defaults to wherever the kernel process's
-        # working directory happens to be — which can differ between
-        # notebooks depending on where they were opened from, making one
-        # notebook's tables invisible to another's Spark session even
-        # though the underlying Delta files are untouched on disk. This
-        # doesn't exist as a problem on Databricks (Unity Catalog isn't
-        # filesystem-path-dependent) — it's purely a local-dev gotcha.
-        .config(
-            "javax.jdo.option.ConnectionURL",
-            f"jdbc:derby:;databaseName={warehouse_dir}/metastore_db;create=true",
-        )
     )
     return configure_spark_with_delta_pip(builder).getOrCreate()
