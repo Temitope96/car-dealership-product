@@ -30,25 +30,14 @@ This repo is being built in public, phase by phase. Current state: **design comp
 
 ## Design documentation
 
-All design work lives at the repo root as numbered phase documents — read them in order for the full reasoning, not just the artifacts:
+The full phase-by-phase design work (workflow mapping, entity model, normalized and star schemas, data capture specs, ETL architecture, automation, dashboard design, and the original scoping brief) is maintained in a separate private repo and available on request — this public repo focuses on the runnable pipeline itself: notebooks, source code, and environment setup.
 
-1. [`phase1-workflow-design.md`](phase1-workflow-design.md) + [`phase1-swimlane.mermaid`](phase1-swimlane.mermaid) — the 11-step business process, actors, exceptions, SLAs
-2. [`phase2-entity-identification.md`](phase2-entity-identification.md) — every business entity, including the WhatsApp-agent-driven ones
-3. [`phase3-normalized-schema.sql`](phase3-normalized-schema.sql) + [`phase3-schema-notes.md`](phase3-schema-notes.md) — 3NF schema with rationale
-4. [`phase4-star-schema.sql`](phase4-star-schema.sql) — dimensional model for reporting
-5. [`phase5a-google-forms.md`](phase5a-google-forms.md), [`phase5b-5c-whatsapp-agents.md`](phase5b-5c-whatsapp-agents.md) — every data capture source, including the two WhatsApp agents
-6. [`phase6-etl-architecture.md`](phase6-etl-architecture.md) — Bronze/Silver/Gold, incremental loading, CDC, error handling
-7. [`phase7-automation.md`](phase7-automation.md) — scheduling, DQ checks, alerts
-8. [`phase8-powerbi-dashboards.md`](phase8-powerbi-dashboards.md) — six dashboards, including an Ops/Data-Quality one
-9. [`phase9-advanced-features.md`](phase9-advanced-features.md) — predictive analytics, anomaly detection, a WhatsApp query bot
-
-[`dealership-data-platform-master-prompt.md`](dealership-data-platform-master-prompt.md) is the original brief this whole project was scoped from.
+A build log covering the engineering issues hit along the way (and how each was diagnosed and fixed) is also available on request.
 
 ## Repo layout
 
 ```
 .
-├── phase1-...9-*.md/.sql       # design docs (see above)
 ├── sql/
 │   ├── bronze/                 # raw landing tables (created by ingestion code, not static DDL)
 │   ├── silver/                 # conformed entity schema (copy of Phase 3 DDL)
