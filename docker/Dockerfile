@@ -20,6 +20,7 @@ WORKDIR /home/jovyan/work
 # python-dotenv have no such conflict and install normally.
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --no-deps delta-spark==4.1.0 && \
-    pip install --no-cache-dir faker==33.1.0 pandas==2.2.3 python-dotenv==1.0.1
+    pip install --no-cache-dir faker==33.1.0 pandas==2.2.3 python-dotenv==1.0.1 \
+        sqlalchemy==2.0.36 psycopg2-binary==2.9.10
 
 USER ${NB_UID}

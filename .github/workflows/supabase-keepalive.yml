@@ -1,0 +1,22 @@
+name: Supabase keep-alive
+
+# Supabase's free tier pauses a project after ~7 days with no real database
+# activity. This runs one lightweight query daily so the live system never
+# silently pauses. See SUPABASE_MIGRATION.md for the full context.
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # once daily, 06:00 UTC
+  workflow_dispatch: {}    # lets you trigger it manually from the Actions tab too
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install postgresql-client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Ping Supabase Postgres
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: psql "$DATABASE_URL" -c "select count(*) from branch;"

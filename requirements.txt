@@ -19,3 +19,9 @@ faker==33.1.0
 # Convenience / general use
 pandas==2.2.3
 python-dotenv==1.0.1
+
+# Postgres connectivity — used to load data into the live Supabase system
+# of record (see SUPABASE_MIGRATION.md); not needed for the local Spark/
+# Delta portfolio build itself.
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
