@@ -1,0 +1,50 @@
+name: Telegram intake
+
+# Real pipeline orchestration -- unlike supabase-keepalive.yml (which only
+# pings the database to stop it pausing), this workflow actually runs the
+# capture + classification steps on a schedule. Each run is short-lived:
+# poll Telegram for anything new, land it in raw_message/receipt_document,
+# then run both agents so new rows get classified/routed the same run.
+#
+# Every step is idempotent (see telegram_poller.py, whatsapp_agent.py,
+# receipt_agent.py docstrings), so a missed or overlapping run is safe.
+#
+# Schedule: weekly for now, while the product isn't in real use yet --
+# tighten this once real dealership traffic starts (Telegram doesn't
+# guarantee indefinite retention of undelivered updates, so a long gap
+# becomes a real risk of silently dropped messages once this matters).
+# Use workflow_dispatch to test on demand regardless of the schedule.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # once a week, Monday 06:00 UTC
+  workflow_dispatch: {}    # manual trigger from the Actions tab, for testing
+
+jobs:
+  poll-and-process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Poll Telegram for new messages/receipts
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: python -m src.pipelines.telegram_poller
+
+      - name: Classify new messages
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: python -m src.pipelines.whatsapp_agent
+
+      - name: Route new receipts for review
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: python -m src.pipelines.receipt_agent

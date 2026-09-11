@@ -25,3 +25,7 @@ python-dotenv==1.0.1
 # Delta portfolio build itself.
 sqlalchemy==2.0.36
 psycopg2-binary==2.9.10
+
+# Telegram Bot API access for the intake poller (src/pipelines/telegram_poller.py).
+# Plain HTTP calls against api.telegram.org -- no bot framework needed.
+requests==2.32.3
