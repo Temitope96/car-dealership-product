@@ -9,16 +9,17 @@ name: Telegram intake
 # Every step is idempotent (see telegram_poller.py, whatsapp_agent.py,
 # receipt_agent.py docstrings), so a missed or overlapping run is safe.
 #
-# Schedule: weekly for now, while the product isn't in real use yet --
-# tighten this once real dealership traffic starts (Telegram doesn't
-# guarantee indefinite retention of undelivered updates, so a long gap
-# becomes a real risk of silently dropped messages once this matters).
+# Schedule: every 3-4 days for now, comfortably inside Supabase's 7-day
+# pause window, while the product isn't in real use yet -- tighten this
+# once real dealership traffic starts (Telegram doesn't guarantee
+# indefinite retention of undelivered updates, so a long gap becomes a
+# real risk of silently dropped messages once this matters).
 # Use workflow_dispatch to test on demand regardless of the schedule.
 
 on:
   schedule:
-    - cron: "0 6 * * 1"   # once a week, Monday 06:00 UTC
-  workflow_dispatch: {}    # manual trigger from the Actions tab, for testing
+    - cron: "0 6 * * 1,4"   # Monday and Thursday, 06:00 UTC (~3-4 day gaps)
+  workflow_dispatch: {}      # manual trigger from the Actions tab, for testing
 
 jobs:
   poll-and-process:
